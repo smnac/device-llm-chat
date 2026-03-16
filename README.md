@@ -1,3 +1,5 @@
+https://arxiv.org/abs/2302.01318
+
 https://developer.nvidia.com/blog/an-introduction-to-speculative-decoding-for-reducing-latency-in-ai-inference/
 
 https://research.google/blog/looking-back-at-speculative-decoding/
