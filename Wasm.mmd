@@ -1,0 +1,44 @@
+graph TD
+    %% Node Definitions
+    Agent(["AI Agent <br> (LLM / Autonomous Agent)"])
+    Protocol{{"MCP-compatible Protocol"}}
+    
+    subgraph Gateway [FastAPI Backend]
+        Backend["Tool Gateway + Router<br>---<br>• Tool discovery API<br>• Tool execution API<br>• Auth / Rate limiting<br>• MCP server interface"]
+    end
+    
+    subgraph Services [Utility Services]
+        Redis[("Redis Cache<br>---<br>• tool list<br>• results")]
+        Embedding["Embedding Service<br>---<br>OpenAI, BGE, Instructor"]
+    end
+    
+    subgraph Storage [Data & Discovery]
+        Registry[("Tool Registry Service<br>PostgreSQL + pgvector<br>---<br>tables: tools, schemas, embeddings<br>vector search → tool discovery")]
+    end
+    
+    subgraph Execution [Wasmtime Runtime]
+        Runtime["Loads WASM modules<br>Executes functions"]
+        Tools[["WASM Tools<br>~100 Utility Modules<br>---<br>image_resize, csv_to_json<br>pdf_text_extract, geo_distance"]]
+    end
+
+    %% Connections
+    Agent ==> Protocol
+    Protocol ==> Backend
+    
+    Backend --- Redis
+    Backend --- Embedding
+    Backend ==> Registry
+    
+    Registry ==> Runtime
+    Runtime ==> Tools
+
+    %% Styling
+    style Agent fill:#dae8fc,stroke:#6c8ebf,stroke-width:2px
+    style Protocol fill:#fff2cc,stroke:#d6b656,stroke-dasharray: 5 5
+    style Gateway fill:#f5f5f5,stroke:#333,stroke-width:2px
+    style Backend fill:#d5e8d4,stroke:#82b366
+    style Redis fill:#f8cecc,stroke:#b85450
+    style Embedding fill:#e1d5e7,stroke:#9673a6
+    style Registry fill:#ffe6cc,stroke:#d79b00
+    style Runtime fill:#f9f9f9,stroke:#333
+    style Tools fill:#e1d5e7,stroke:#9673a6
